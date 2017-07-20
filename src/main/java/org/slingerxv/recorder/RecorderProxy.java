@@ -448,6 +448,9 @@ public class RecorderProxy {
 		}
 
 		public RecorderProxyBuilder dataSource(Supplier<DataSource> dataSourceFactory) {
+			if (dataSourceFactory == null) {
+				throw new NullPointerException("dataSourceFactory");
+			}
 			this.dataSourceFactory = dataSourceFactory;
 			return this;
 		}

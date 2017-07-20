@@ -164,7 +164,7 @@ public class RecorderUtil {
 			String sqlType = type.getValue();
 			String sizeStr = size > 0 ? "(" + size + ")" : "";
 			String comment = annotation.comment();
-			String tableFieldName = "`" + field + "`";
+			String tableFieldName = "`" + field.getName() + "`";
 			createTableBuffer.append(",").append(line()).append(tableFieldName).append(" ").append(sqlType)
 					.append(sizeStr).append(" null comment ").append("'").append(comment).append("'");
 		}
@@ -220,7 +220,7 @@ public class RecorderUtil {
 		String tableName = getLogTableName(alog, System.currentTimeMillis());
 		List<Field> fieldAccessV2 = getLogFields(alog.getClass());
 		for (Field field : fieldAccessV2) {
-			String tableFieldName = "`" + field + "`";
+			String tableFieldName = "`" + field.getName() + "`";
 			Object object = field.get(alog);
 			String parseFieldValueType = object.toString();
 			fieldBuffer.append(tableFieldName).append(",");

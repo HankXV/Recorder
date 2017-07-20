@@ -241,7 +241,7 @@ public class RecorderProxy {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * 获取当前队列中日志任务的数量
 	 * 

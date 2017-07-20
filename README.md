@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/HankXV/Limitart.svg?branch=master)](https://travis-ci.org/HankXV/Limitart)
+[![Build Status](https://travis-ci.org/HankXV/Recorder.svg?branch=master)](https://travis-ci.org/HankXV/Recorder)
 # Brief Introduction
 A framework that helps you log in the database
 ## Environment

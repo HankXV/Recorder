@@ -22,10 +22,10 @@ mysql-connector-java-5.x
 ```
 ```java
 
-		UserLog userLog = new UserLog();
-		userLog.name="HankXV";
-		userLog.age=101;
-		userLog.address="home";
-		new RecorderProxy.RecorderProxyBuilder().dataSource(datasource).build().execute(userLog);
+	UserLog userLog = new UserLog();
+	userLog.name="HankXV";
+	userLog.age=101;
+	userLog.address="home";
+	new RecorderProxy.RecorderProxyBuilder().dataSource(datasource).build().execute(userLog);
 		
 ```

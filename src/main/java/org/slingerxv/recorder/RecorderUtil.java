@@ -220,11 +220,8 @@ public class RecorderUtil {
 		String tableName = getLogTableName(alog, System.currentTimeMillis());
 		List<Field> fieldAccessV2 = getLogFields(alog.getClass());
 		for (Field field : fieldAccessV2) {
-			String tableFieldName = "`" + field.getName() + "`";
-			Object object = field.get(alog);
-			String parseFieldValueType = object.toString();
-			fieldBuffer.append(tableFieldName).append(",");
-			valueBuffer.append(parseFieldValueType).append(",");
+			fieldBuffer.append("`" + field.getName() + "`").append(",");
+			valueBuffer.append("'" + field.get(alog) + "'").append(",");
 		}
 		fieldBuffer.deleteCharAt(fieldBuffer.length() - 1);
 		valueBuffer.deleteCharAt(valueBuffer.length() - 1);

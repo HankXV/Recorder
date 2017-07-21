@@ -5,7 +5,7 @@ A framework that helps you log in MySQL
 ## Environment
 Jdk8 or above<br>
 mysql-connector-java-5.x
-# Quick start
+# Quick Start
 ```java
 	public class UserLog extends TimeBasedLog {
 		@Column(type = SQLType.MYSQL_varchar, size = 255, comment = "user name")

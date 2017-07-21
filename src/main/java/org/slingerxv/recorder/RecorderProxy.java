@@ -87,11 +87,11 @@ public class RecorderProxy {
 				try (Connection con = dataSourceFactory.get().getConnection();) {
 					long now = System.currentTimeMillis();
 					String buildExistTableSql_MYSQL = RecorderUtil
-							.buildExistTableSql_MYSQL(RecorderUtil.getLogTableName(alog, now));
+							.buildExistTableSqlMYSQL(RecorderUtil.getLogTableName(alog, now));
 					try (PreparedStatement existStatement = con.prepareStatement(buildExistTableSql_MYSQL);
 							ResultSet executeQuery = existStatement.executeQuery();) {
 						if (!executeQuery.next()) {
-							String buildCreateTableSql = RecorderUtil.buildCreateTableSql_MYSQL(alog, dbEngine,
+							String buildCreateTableSql = RecorderUtil.buildCreateTableSqlMYSQL(alog, dbEngine,
 									charset);
 							try (PreparedStatement createStatement = con.prepareStatement(buildCreateTableSql);) {
 								// 执行创建表
@@ -100,7 +100,7 @@ public class RecorderProxy {
 
 						}
 					}
-					String buildInsertTableSql = RecorderUtil.buildInsertTableSql_MYSQL(alog);
+					String buildInsertTableSql = RecorderUtil.buildInsertTableSqlMYSQL(alog);
 					try (PreparedStatement insertStatement = con.prepareStatement(buildInsertTableSql);) {
 						// 执行插入
 						if (insertStatement.executeUpdate() > 0) {
@@ -154,7 +154,7 @@ public class RecorderProxy {
 		if (isStop) {
 			throw new RecorderProxyAlreadyStopException();
 		}
-		String buildSelectTableSql = RecorderUtil.buildSelectCountTableSql_MYSQL(builder);
+		String buildSelectTableSql = RecorderUtil.buildSelectCountTableSqlMYSQL(builder);
 		try (Connection connection = dataSourceFactory.get().getConnection();
 				PreparedStatement prepareStatement = connection.prepareStatement(buildSelectTableSql);
 				ResultSet executeQuery = prepareStatement.executeQuery();) {
@@ -216,7 +216,7 @@ public class RecorderProxy {
 			throw new RecorderProxyAlreadyStopException();
 		}
 		List<T> result = new ArrayList<>();
-		String buildSelectTableSql = RecorderUtil.buildSelectTableSql_MYSQL(builder);
+		String buildSelectTableSql = RecorderUtil.buildSelectTableSqlMYSQL(builder);
 		try (Connection connection = dataSourceFactory.get().getConnection();
 				PreparedStatement prepareStatement = connection.prepareStatement(buildSelectTableSql);
 				ResultSet executeQuery = prepareStatement.executeQuery();) {

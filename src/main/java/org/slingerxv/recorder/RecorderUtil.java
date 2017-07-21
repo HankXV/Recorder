@@ -100,7 +100,7 @@ public class RecorderUtil {
 	 *            数据库表名
 	 * @return
 	 */
-	public static String buildExistTableSql_MYSQL(String tableName) {
+	public static String buildExistTableSqlMYSQL(String tableName) {
 		String sql = "SHOW TABLES  LIKE '" + tableName + "'";
 		log.debug(sql);
 		return sql;
@@ -114,7 +114,7 @@ public class RecorderUtil {
 	 * @return sql语句
 	 * @throws Exception
 	 */
-	public static String buildSelectCountTableSql_MYSQL(RecorderQueryBuilder builder) throws Exception {
+	public static String buildSelectCountTableSqlMYSQL(RecorderQueryBuilder builder) throws Exception {
 		String build = builder.build();
 		log.debug(build);
 		return build;
@@ -129,7 +129,7 @@ public class RecorderUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String buildSelectTableSql_MYSQL(RecorderQueryBuilder builder) throws Exception {
+	public static String buildSelectTableSqlMYSQL(RecorderQueryBuilder builder) throws Exception {
 		String build = builder.build();
 		log.debug(build);
 		return build;
@@ -142,7 +142,7 @@ public class RecorderUtil {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String buildCreateTableSql_MYSQL(IRecorder alog, String dbEngine, String charset)
+	public static String buildCreateTableSqlMYSQL(IRecorder alog, String dbEngine, String charset)
 			throws UnsupportedEncodingException {
 		StringBuilder createTableBuffer = new StringBuilder();
 		String tableName = getLogTableName(alog, System.currentTimeMillis());
@@ -211,7 +211,7 @@ public class RecorderUtil {
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public static String buildInsertTableSql_MYSQL(IRecorder alog)
+	public static String buildInsertTableSqlMYSQL(IRecorder alog)
 			throws IllegalArgumentException, IllegalAccessException {
 		StringBuilder fieldBuffer = new StringBuilder();
 		StringBuilder valueBuffer = new StringBuilder();
@@ -238,7 +238,7 @@ public class RecorderUtil {
 	 * @param fieldNameAndType
 	 * @return
 	 */
-	public static String buildColumnIncreaseSql_MYSQL(String tableName, String fieldName, String type, int size,
+	public static String buildColumnIncreaseSqlMYSQL(String tableName, String fieldName, String type, int size,
 			String comment) {
 		String sql = "alter table `" + tableName + "` add column `" + fieldName + "` " + type
 				+ (size > 0 ? "(" + size + ")" : "varchar".equals(type) ? "(255)" : "") + " comment '" + comment + "';";
@@ -253,7 +253,7 @@ public class RecorderUtil {
 	 * @param fieldName
 	 * @return
 	 */
-	public static String buildColumnDecreaseSql_MYSQL(String tableName, String fieldName) {
+	public static String buildColumnDecreaseSqlMYSQL(String tableName, String fieldName) {
 		String sql = "alter table `" + tableName + "` drop column `" + fieldName + "`;";
 		log.debug(sql);
 		return sql;
@@ -266,7 +266,7 @@ public class RecorderUtil {
 	 * @param fieldNameAndType
 	 * @return
 	 */
-	public static String buildColumnModifySql_MYSQL(String tableName, String fieldName, String type, int size,
+	public static String buildColumnModifySqlMYSQL(String tableName, String fieldName, String type, int size,
 			String comment) {
 		String sql = "alter table `" + tableName + "` modify column `" + fieldName + "` " + type
 				+ (size > 0 ? "(" + size + ")" : type.equals("varchar") ? "(255)" : "") + " comment '" + comment + "';";

@@ -148,7 +148,7 @@ public class RecorderChecker {
 			}
 
 			for (ColumnInfo col : increaseList) {
-				try (PreparedStatement prepareStatement = con.prepareStatement(RecorderUtil.buildColumnIncreaseSql_MYSQL(
+				try (PreparedStatement prepareStatement = con.prepareStatement(RecorderUtil.buildColumnIncreaseSqlMYSQL(
 						logTableName, col.getTableFieldName(), col.getType(), col.getSize(), col.getComment()));) {
 					if (prepareStatement.executeUpdate() == 0) {
 						SQLException sqlException = new SQLException("add column failed，logger:" + logTableName
@@ -164,7 +164,7 @@ public class RecorderChecker {
 			}
 			for (String colName : decreaseList) {
 				try (PreparedStatement prepareStatement = con
-						.prepareStatement(RecorderUtil.buildColumnDecreaseSql_MYSQL(logTableName, colName));) {
+						.prepareStatement(RecorderUtil.buildColumnDecreaseSqlMYSQL(logTableName, colName));) {
 					if (prepareStatement.executeUpdate() == 0) {
 						SQLException sqlException = new SQLException(
 								"delete column failed，logger:" + logTableName + "-----column:" + colName);
@@ -178,7 +178,7 @@ public class RecorderChecker {
 
 			}
 			for (ColumnInfo col : modifyList) {
-				try (PreparedStatement prepareStatement = con.prepareStatement(RecorderUtil.buildColumnModifySql_MYSQL(
+				try (PreparedStatement prepareStatement = con.prepareStatement(RecorderUtil.buildColumnModifySqlMYSQL(
 						logTableName, col.getTableFieldName(), col.getType(), col.getSize(), col.getComment()));) {
 					if (prepareStatement.executeUpdate() == 0) {
 						SQLException sqlException = new SQLException("change column failed,logger:" + logTableName

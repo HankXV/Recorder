@@ -156,10 +156,8 @@ public class RecorderUtil {
 			}
 			SQLType type = annotation.type();
 			int size = annotation.size();
-			if (type == SQLType.MYSQL_varchar) {
-				if (size <= 0) {
-					size = 255;
-				}
+			if (type == SQLType.MYSQL_varchar && size <= 0) {
+				size = 255;
 			}
 			String sqlType = type.getValue();
 			String sizeStr = size > 0 ? "(" + size + ")" : "";
@@ -243,7 +241,7 @@ public class RecorderUtil {
 	public static String buildColumnIncreaseSql_MYSQL(String tableName, String fieldName, String type, int size,
 			String comment) {
 		String sql = "alter table `" + tableName + "` add column `" + fieldName + "` " + type
-				+ (size > 0 ? "(" + size + ")" : type.equals("varchar") ? "(255)" : "") + " comment '" + comment + "';";
+				+ (size > 0 ? "(" + size + ")" : "varchar".equals(type) ? "(255)" : "") + " comment '" + comment + "';";
 		log.debug(sql);
 		return sql;
 	}

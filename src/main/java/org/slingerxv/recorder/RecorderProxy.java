@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -62,10 +63,7 @@ public class RecorderProxy {
 		this.dbEngine = builder.dbEngine;
 		this.charset = builder.charset;
 		this.customInsertThreadPool = builder.customInsertThreadPool;
-		if (builder.dataSourceFactory == null) {
-			throw new NullPointerException("dataSourceFactory");
-		}
-		this.dataSourceFactory = builder.dataSourceFactory;
+		this.dataSourceFactory = Objects.requireNonNull(builder.dataSourceFactory, "dataSourceFactory");
 	}
 
 	/**
@@ -77,13 +75,13 @@ public class RecorderProxy {
 	 */
 	public RecorderProxy execute(final IRecorder alog) throws Exception {
 		if (isStop) {
-			throw new Exception("server is stopped!");
+			throw new RecorderProxyAlreadyStopException();
 		}
 
 		if (alog != null) {
 			if (getTaksCount() > taskMaxSize) {
 				lostLogNum.increment();
-				throw new Exception("task count is overload,drop task:" + alog);
+				throw new RecorderTaskOverloadException("task count is overload,drop task:" + alog);
 			}
 			threadPool.execute(() -> {
 				try (Connection con = dataSourceFactory.get().getConnection();) {
@@ -154,7 +152,7 @@ public class RecorderProxy {
 	 */
 	public int queryCount(Class<? extends IRecorder> clss, RecorderQueryBuilder builder) throws Exception {
 		if (isStop) {
-			throw new Exception("server is stopped!");
+			throw new RecorderProxyAlreadyStopException();
 		}
 		String buildSelectTableSql = RecorderUtil.buildSelectCountTableSql_MYSQL(builder);
 		try (Connection connection = dataSourceFactory.get().getConnection();
@@ -215,7 +213,7 @@ public class RecorderProxy {
 	 */
 	public <T extends IRecorder> List<T> query(Class<T> clss, RecorderQueryBuilder builder) throws Exception {
 		if (isStop) {
-			throw new Exception("server is stopped!");
+			throw new RecorderProxyAlreadyStopException();
 		}
 		List<T> result = new ArrayList<>();
 		String buildSelectTableSql = RecorderUtil.buildSelectTableSql_MYSQL(builder);
@@ -241,7 +239,7 @@ public class RecorderProxy {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 获取当前队列中日志任务的数量
 	 * 
@@ -261,14 +259,14 @@ public class RecorderProxy {
 
 	public RecorderProxy startServer() throws Exception {
 		if (!isStop) {
-			throw new NullPointerException("server has already start!");
+			throw new RecorderProxyAlreadyStartException();
 		}
 		// 初始化任务线程池
 		if (customInsertThreadPool == null) {
 			this.logTaskQueue = new LinkedBlockingQueue<>();
 			this.threadPool = new ThreadPoolExecutor(threadCorePoolSize, threadMaximumPoolSize, 0,
 					TimeUnit.MILLISECONDS, logTaskQueue, (runnable) -> {
-						Thread t = new Thread(runnable, "LogDBServer-Insert-" + threadPool.getPoolSize());
+						Thread t = new Thread(runnable, "RecorderProxy-Insert-" + threadPool.getPoolSize());
 						return t;
 					});
 		} else {
@@ -356,12 +354,9 @@ public class RecorderProxy {
 		 * @param packageName
 		 * @return
 		 */
-		public RecorderProxyBuilder addScanPackage(String... packageName) {
-			for (String temp : packageName) {
-				if (temp == null || temp.trim().length() == 0) {
-					throw new NullPointerException("packageName");
-				}
-				this.scanPackages.add(temp);
+		public RecorderProxyBuilder addScanPackage(String... packageNames) {
+			for (String temp : Objects.requireNonNull(packageNames, "packageNames")) {
+				this.scanPackages.add(Objects.requireNonNull(temp, "packageName"));
 			}
 			return this;
 		}
@@ -412,10 +407,7 @@ public class RecorderProxy {
 		 * @return
 		 */
 		public RecorderProxyBuilder dbEngine(String dbEngine) {
-			if (dbEngine == null || dbEngine.trim().length() == 0) {
-				throw new NullPointerException("dbEngine");
-			}
-			this.dbEngine = dbEngine;
+			this.dbEngine = Objects.requireNonNull(dbEngine, "dbEngine");
 			return this;
 		}
 
@@ -426,10 +418,7 @@ public class RecorderProxy {
 		 * @return
 		 */
 		public RecorderProxyBuilder charset(String charset) {
-			if (charset == null) {
-				throw new NullPointerException("charset");
-			}
-			this.charset = charset;
+			this.charset = Objects.requireNonNull(charset, "charset");
 			return this;
 		}
 
@@ -440,18 +429,12 @@ public class RecorderProxy {
 		 * @return
 		 */
 		public RecorderProxyBuilder customInsertThreadPool(ThreadPoolExecutor threadPool) {
-			if (threadPool == null) {
-				throw new NullPointerException("customInsertThreadPool");
-			}
-			this.customInsertThreadPool = threadPool;
+			this.customInsertThreadPool = Objects.requireNonNull(threadPool, "threadPool");
 			return this;
 		}
 
 		public RecorderProxyBuilder dataSource(Supplier<DataSource> dataSourceFactory) {
-			if (dataSourceFactory == null) {
-				throw new NullPointerException("dataSourceFactory");
-			}
-			this.dataSourceFactory = dataSourceFactory;
+			this.dataSourceFactory = Objects.requireNonNull(dataSourceFactory, "dataSourceFactory");
 			return this;
 		}
 	}

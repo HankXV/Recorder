@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/HankXV/Recorder.svg?branch=master)](https://travis-ci.org/HankXV/Recorder)
 # Brief Introduction
 A framework that helps you log in MySQL
+![](https://github.com/HankXV/Recorder/blob/master/recorder-thumb.png)
 ## Environment
 Jdk8 or above<br>
 mysql-connector-java-5.x

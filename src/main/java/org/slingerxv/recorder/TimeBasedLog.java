@@ -8,6 +8,6 @@ package org.slingerxv.recorder;
  *
  */
 public abstract class TimeBasedLog implements IRecorder {
-	@Column(type = SQLType.MYSQL_bigint, comment = "记录时间")
+	@Column(type = SQLType.MYSQL_bigint, comment = "create time")
 	public long createTime = System.currentTimeMillis();
 }

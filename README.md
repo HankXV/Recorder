@@ -17,7 +17,7 @@ mysql-connector-java-5.x
 		public String address;
 	
 		@Override
-		public RollType getLogRollType() {
+		public RollType rollType() {
 			return RollType.DAY_ROLL;
 		}
 	}
@@ -28,6 +28,11 @@ mysql-connector-java-5.x
 	userLog.name="HankXV";
 	userLog.age=101;
 	userLog.address="home";
-	new RecorderProxy.RecorderProxyBuilder().dataSource(datasource).build().execute(userLog);
+	new RecorderProxy
+	.RecorderProxyBuilder()
+	.dataSource(yourDatasource)
+	.build()
+	.startServer()
+	.execute(userLog);
 		
 ```

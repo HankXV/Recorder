@@ -6,5 +6,5 @@ public interface IRecorder {
 	 * 
 	 * @return
 	 */
-    RollType getLogRollType();
+    RollType rollType();
 }

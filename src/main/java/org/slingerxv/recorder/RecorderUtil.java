@@ -365,7 +365,7 @@ public class RecorderUtil {
 	 * @return
 	 */
 	public static String getLogTableName(IRecorder alog, long millTime) {
-		RollType logRollType = alog.getLogRollType();
+		RollType logRollType = alog.rollType();
 		String tableName = alog.getClass().getSimpleName().toLowerCase();
 		switch (logRollType) {
 		case DAY_ROLL:
@@ -406,7 +406,7 @@ public class RecorderUtil {
 		IRecorder newInstance = alog.newInstance();
 		do {
 			String logTableName = getLogTableName(newInstance, startCal.getTimeInMillis());
-			RollType logRollType = newInstance.getLogRollType();
+			RollType logRollType = newInstance.rollType();
 			if (logRollType == RollType.DAY_ROLL) {
 				if (startCal.getTimeInMillis() >= start) {
 					result.add(logTableName);

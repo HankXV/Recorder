@@ -9,7 +9,7 @@ public class UserLog extends TimeBasedLog {
 	public String address;
 
 	@Override
-	public RollType getLogRollType() {
+	public RollType rollType() {
 		return RollType.DAY_ROLL;
 	}
 }

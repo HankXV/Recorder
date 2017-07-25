@@ -1,5 +1,6 @@
 package org.slingerxv.recorder;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
@@ -32,7 +33,6 @@ public class RecorderChecker {
 	 * @param bean
 	 *            JavaBean
 	 * @throws RecorderCheckException
-	 * @throws Exception
 	 */
 	public void registTable(Class<? extends IRecorder> bean) throws RecorderCheckException {
 		String lowerCase = bean.getSimpleName().toLowerCase();
@@ -48,16 +48,13 @@ public class RecorderChecker {
 	 * @see TimeBasedLog
 	 * @param packageName
 	 * @throws RecorderCheckException
-	 * @throws Exception
+	 * @throws IOException
+	 * @throws ClassNotFoundException
 	 */
 	@SuppressWarnings("unchecked")
-	public void registTable(String packageName) throws RecorderCheckException {
+	public void registTable(String packageName) throws RecorderCheckException, ClassNotFoundException, IOException {
 		List<Class<?>> classes = new ArrayList<>();
-		try {
-			classes = ReflectionUtil.getClassesByPackage(packageName, IRecorder.class);
-		} catch (Exception e) {
-			log.error(e, e);
-		}
+		classes = ReflectionUtil.getClassesByPackage(packageName, IRecorder.class);
 		log.debug("package：{}，scan classes：{}。", packageName, classes.size());
 		for (Class<?> temp : classes) {
 			registTable((Class<? extends IRecorder>) temp);
@@ -70,7 +67,6 @@ public class RecorderChecker {
 	 * @param con
 	 * @throws SQLException
 	 * @throws RecorderCheckException
-	 * @throws Exception
 	 */
 	public void executeCheck(Connection con) throws SQLException, RecorderCheckException {
 		log.info("start check all recorders...");

@@ -1,5 +1,6 @@
 package org.slingerxv.recorder;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -125,12 +126,12 @@ public class TableChecker {
 	 * 
 	 * @param bean
 	 *            JavaBean
-	 * @throws Exception
+	 * @throws TableCheckException
 	 */
-	public void registTable(Class<?> bean) throws Exception {
+	public void registTable(Class<?> bean) throws TableCheckException {
 		TableCheck annotation = bean.getAnnotation(TableCheck.class);
 		if (annotation == null) {
-			throw new Exception("bean need TableCheck annotation!");
+			throw new TableCheckException("bean need TableCheck annotation!");
 		}
 		String table = annotation.value();
 		if (table == null || table.trim().length() == 0) {
@@ -145,15 +146,15 @@ public class TableChecker {
 	 * 
 	 * @param bean
 	 * @param tableName
-	 * @throws Exception
+	 * @throws TableCheckException
 	 */
-	public void registTable(Class<?> bean, String tableName) throws Exception {
+	public void registTable(Class<?> bean, String tableName) throws TableCheckException {
 		if (tables.containsKey(tableName)) {
-			throw new Exception("table name '" + tableName + "' duplicated!");
+			throw new TableCheckException("table name '" + tableName + "' duplicated!");
 		}
 
 		tables.put(tableName, bean);
-		log.debug("添加到表检查集合:{}[{}]", tableName, bean.getSimpleName());
+		log.debug("add into table check list:{}[{}]", tableName, bean.getSimpleName());
 	}
 
 	/**
@@ -161,16 +162,15 @@ public class TableChecker {
 	 * 
 	 * @see TableCheck
 	 * @param packageName
-	 * @throws Exception
+	 * @throws TableCheckException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
 	 */
-	public void registTable(String packageName, Class<?> superClass) throws Exception {
+	public void registTable(String packageName, Class<?> superClass)
+			throws TableCheckException, ClassNotFoundException, IOException {
 		List<Class<?>> classes = new ArrayList<>();
-		try {
-			classes = ReflectionUtil.getClassesByPackage(packageName, superClass);
-		} catch (Exception e) {
-			log.error(e, e);
-		}
-		log.debug("包：{}，共扫描类：{}个。", packageName, classes.size());
+		classes = ReflectionUtil.getClassesByPackage(packageName, superClass);
+		log.debug("package：{}，scan classes：{}。", packageName, classes.size());
 		for (Class<?> temp : classes) {
 			TableCheck annotation = temp.getAnnotation(TableCheck.class);
 			if (annotation == null) {

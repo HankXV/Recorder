@@ -113,7 +113,6 @@ public class RecorderUtil {
 	 *            构造器
 	 * @return sql语句
 	 * @throws RecorderQueryBuilderException
-	 * @throws Exception
 	 */
 	public static String buildSelectCountTableSqlMYSQL(RecorderQueryBuilder builder)
 			throws RecorderQueryBuilderException {
@@ -129,9 +128,9 @@ public class RecorderUtil {
 	 * @param start
 	 * @param end
 	 * @return
-	 * @throws Exception
+	 * @throws RecorderQueryBuilderException
 	 */
-	public static String buildSelectTableSqlMYSQL(RecorderQueryBuilder builder) throws Exception {
+	public static String buildSelectTableSqlMYSQL(RecorderQueryBuilder builder) throws RecorderQueryBuilderException {
 		String build = builder.build();
 		log.debug(build);
 		return build;

@@ -1,5 +1,6 @@
 package org.slingerxv.recorder;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -73,7 +74,6 @@ public class RecorderProxy {
 	 * @return
 	 * @throws RecorderProxyAlreadyStopException
 	 * @throws RecorderTaskOverloadException
-	 * @throws Exception
 	 */
 	public RecorderProxy execute(final IRecorder alog)
 			throws RecorderProxyAlreadyStopException, RecorderTaskOverloadException {
@@ -156,7 +156,6 @@ public class RecorderProxy {
 	 * @throws RecorderProxyAlreadyStopException
 	 * @throws RecorderQueryBuilderException
 	 * @throws SQLException
-	 * @throws Exception
 	 */
 	public int queryCount(Class<? extends IRecorder> clss, RecorderQueryBuilder builder)
 			throws RecorderProxyAlreadyStopException, RecorderQueryBuilderException, SQLException {
@@ -200,10 +199,17 @@ public class RecorderProxy {
 	 * @param size
 	 * @param orderParam
 	 * @return
+	 * @throws SQLException
+	 * @throws RecorderQueryBuilderException
+	 * @throws RecorderProxyAlreadyStopException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends IRecorder> List<T> query(String tableName, RecorderQueryBuilder builder) throws Exception {
+	public <T extends IRecorder> List<T> query(String tableName, RecorderQueryBuilder builder)
+			throws InstantiationException, IllegalAccessException, RecorderProxyAlreadyStopException,
+			RecorderQueryBuilderException, SQLException {
 		Class<? extends IRecorder> tableClass = getTableClassByName(tableName);
 		if (tableClass == null) {
 			return null;
@@ -218,9 +224,15 @@ public class RecorderProxy {
 	 * @param startTime
 	 * @param endTime
 	 * @return
-	 * @throws Exception
+	 * @throws RecorderProxyAlreadyStopException
+	 * @throws RecorderQueryBuilderException
+	 * @throws SQLException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	public <T extends IRecorder> List<T> query(Class<T> clss, RecorderQueryBuilder builder) throws Exception {
+	public <T extends IRecorder> List<T> query(Class<T> clss, RecorderQueryBuilder builder)
+			throws RecorderProxyAlreadyStopException, RecorderQueryBuilderException, SQLException,
+			InstantiationException, IllegalAccessException {
 		if (isStop) {
 			throw new RecorderProxyAlreadyStopException();
 		}
@@ -266,7 +278,8 @@ public class RecorderProxy {
 		return lostLogNum.longValue();
 	}
 
-	public RecorderProxy startServer() throws RecorderProxyAlreadyStartException, RecorderCheckException, SQLException {
+	public RecorderProxy startServer() throws RecorderProxyAlreadyStartException, RecorderCheckException, SQLException,
+			ClassNotFoundException, IOException {
 		if (!isStop) {
 			throw new RecorderProxyAlreadyStartException();
 		}

@@ -71,9 +71,12 @@ public class RecorderProxy {
 	 * 
 	 * @param baseLog
 	 * @return
+	 * @throws RecorderProxyAlreadyStopException
+	 * @throws RecorderTaskOverloadException
 	 * @throws Exception
 	 */
-	public RecorderProxy execute(final IRecorder alog) throws Exception {
+	public RecorderProxy execute(final IRecorder alog)
+			throws RecorderProxyAlreadyStopException, RecorderTaskOverloadException {
 		if (isStop) {
 			throw new RecorderProxyAlreadyStopException();
 		}
@@ -91,8 +94,7 @@ public class RecorderProxy {
 					try (PreparedStatement existStatement = con.prepareStatement(buildExistTableSql_MYSQL);
 							ResultSet executeQuery = existStatement.executeQuery();) {
 						if (!executeQuery.next()) {
-							String buildCreateTableSql = RecorderUtil.buildCreateTableSqlMYSQL(alog, dbEngine,
-									charset);
+							String buildCreateTableSql = RecorderUtil.buildCreateTableSqlMYSQL(alog, dbEngine, charset);
 							try (PreparedStatement createStatement = con.prepareStatement(buildCreateTableSql);) {
 								// 执行创建表
 								createStatement.executeUpdate();
@@ -131,9 +133,12 @@ public class RecorderProxy {
 	 * @param startTime
 	 * @param endTime
 	 * @return
-	 * @throws Exception
+	 * @throws SQLException
+	 * @throws RecorderQueryBuilderException
+	 * @throws RecorderProxyAlreadyStopException
 	 */
-	public int queryCount(String tableName, RecorderQueryBuilder builder) throws Exception {
+	public int queryCount(String tableName, RecorderQueryBuilder builder)
+			throws RecorderProxyAlreadyStopException, RecorderQueryBuilderException, SQLException {
 		Class<? extends IRecorder> tableClass = getTableClassByName(tableName);
 		if (tableClass == null) {
 			return 0;
@@ -148,9 +153,13 @@ public class RecorderProxy {
 	 * @param startTime
 	 * @param endTime
 	 * @return
+	 * @throws RecorderProxyAlreadyStopException
+	 * @throws RecorderQueryBuilderException
+	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public int queryCount(Class<? extends IRecorder> clss, RecorderQueryBuilder builder) throws Exception {
+	public int queryCount(Class<? extends IRecorder> clss, RecorderQueryBuilder builder)
+			throws RecorderProxyAlreadyStopException, RecorderQueryBuilderException, SQLException {
 		if (isStop) {
 			throw new RecorderProxyAlreadyStopException();
 		}
@@ -257,7 +266,7 @@ public class RecorderProxy {
 		return lostLogNum.longValue();
 	}
 
-	public RecorderProxy startServer() throws Exception {
+	public RecorderProxy startServer() throws RecorderProxyAlreadyStartException, RecorderCheckException, SQLException {
 		if (!isStop) {
 			throw new RecorderProxyAlreadyStartException();
 		}
@@ -290,7 +299,7 @@ public class RecorderProxy {
 		return this;
 	}
 
-	public RecorderProxy stopServer() throws Exception {
+	public RecorderProxy stopServer() throws RecorderProxyAlreadyStopException {
 		if (isStop) {
 			throw new RecorderProxyAlreadyStopException();
 		}

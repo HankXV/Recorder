@@ -112,9 +112,11 @@ public class RecorderUtil {
 	 * @param builder
 	 *            构造器
 	 * @return sql语句
+	 * @throws RecorderQueryBuilderException
 	 * @throws Exception
 	 */
-	public static String buildSelectCountTableSqlMYSQL(RecorderQueryBuilder builder) throws Exception {
+	public static String buildSelectCountTableSqlMYSQL(RecorderQueryBuilder builder)
+			throws RecorderQueryBuilderException {
 		String build = builder.build();
 		log.debug(build);
 		return build;
@@ -269,37 +271,37 @@ public class RecorderUtil {
 	public static String buildColumnModifySqlMYSQL(String tableName, String fieldName, String type, int size,
 			String comment) {
 		String sql = "alter table `" + tableName + "` modify column `" + fieldName + "` " + type
-				+ (size > 0 ? "(" + size + ")" : type.equals("varchar") ? "(255)" : "") + " comment '" + comment + "';";
+				+ (size > 0 ? "(" + size + ")" : "varchar".equals(type) ? "(255)" : "") + " comment '" + comment + "';";
 		log.debug(sql);
 		return sql;
 	}
 
 	public static boolean isSame(ColumnInfo now, ColumnInfo old) {
-		if ((((now.getType().equals(SQLType.MYSQL_int.getValue()))
+		if (((now.getType().equals(SQLType.MYSQL_int.getValue()))
 				|| (now.getType().equals(SQLType.MYSQL_integer.getValue()))
-				|| (now.getType().startsWith(SQLType.MYSQL_int.getValue()))))
-				&& (((old.getType().equals(SQLType.MYSQL_integer.getValue()))
+				|| (now.getType().startsWith(SQLType.MYSQL_int.getValue())))
+				&& ((old.getType().equals(SQLType.MYSQL_integer.getValue()))
 						|| (old.getType().equals(SQLType.MYSQL_int.getValue()))
-						|| (old.getType().startsWith(SQLType.MYSQL_int.getValue()))))) {
+						|| (old.getType().startsWith(SQLType.MYSQL_int.getValue())))) {
 			return true;
 		}
 
-		if ((now.getType().equals(SQLType.MYSQL_bigint.getValue())) && (old.getType().equals(now.getType()))) {
+		if (now.getType().equals(SQLType.MYSQL_bigint.getValue()) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if ((now.getType().equals(SQLType.MYSQL_text.getValue())) && (old.getType().equals(now.getType()))) {
+		if (now.getType().equals(SQLType.MYSQL_text.getValue()) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if ((now.getType().equals(SQLType.MYSQL_longtext.getValue())) && (old.getType().equals(now.getType()))) {
+		if (now.getType().equals(SQLType.MYSQL_longtext.getValue()) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if ((now.getType().equals(SQLType.MYSQL_bit.getValue())) && (old.getType().equals(now.getType()))) {
+		if (now.getType().equals(SQLType.MYSQL_bit.getValue()) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if ((now.getType().equals(SQLType.MYSQL_tinyint.getValue())) && (old.getType().equals(now.getType()))) {
+		if (now.getType().equals(SQLType.MYSQL_tinyint.getValue()) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		return (now.getType().equals(old.getType())) && (now.getSize() <= old.getSize());
+		return now.getType().equals(old.getType()) && now.getSize() <= old.getSize();
 	}
 
 	public static boolean ableChange(ColumnInfo info, ColumnInfo info2) {

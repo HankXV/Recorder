@@ -76,7 +76,7 @@ public class RecorderQueryBuilder {
 		return this;
 	}
 
-	public String build() throws Exception {
+	public String build() throws RecorderQueryBuilderException {
 		String source = "select {0} from {1} {2} {3} {4} {5}";
 		if (selections.length() == 0) {
 			throw new RecorderQueryBuilderException("no selection item!");
@@ -180,8 +180,7 @@ public class RecorderQueryBuilder {
 
 		public WhereConditionBuilder like(String fieldName, Object value, boolean left, boolean right) {
 			sb.append(Objects.requireNonNull(fieldName)).append(" like '").append(left ? "%" : "")
-					.append(value == null ? "" : value.toString())
-					.append(right ? "%" : "").append("'");
+					.append(value == null ? "" : value.toString()).append(right ? "%" : "").append("'");
 			if (contactSignal > 0) {
 				--contactSignal;
 			}

@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 public class RecorderChecker {
 	private static Logger log = LogManager.getLogger();
 	private HashMap<String, Class<? extends IRecorder>> tables = new HashMap<>();
-	
 
 	public void clearTables() {
 		tables.clear();
@@ -32,12 +31,13 @@ public class RecorderChecker {
 	 * 
 	 * @param bean
 	 *            JavaBean
+	 * @throws RecorderCheckException
 	 * @throws Exception
 	 */
-	public void registTable(Class<? extends IRecorder> bean) throws Exception {
+	public void registTable(Class<? extends IRecorder> bean) throws RecorderCheckException {
 		String lowerCase = bean.getSimpleName().toLowerCase();
 		if (tables.containsKey(lowerCase)) {
-			throw new Exception("table name: " + lowerCase + " duplicated!");
+			throw new RecorderCheckException("table name: " + lowerCase + " duplicated!");
 		}
 		tables.put(lowerCase, bean);
 	}
@@ -47,17 +47,18 @@ public class RecorderChecker {
 	 * 
 	 * @see TimeBasedLog
 	 * @param packageName
+	 * @throws RecorderCheckException
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void registTable(String packageName) throws Exception {
+	public void registTable(String packageName) throws RecorderCheckException {
 		List<Class<?>> classes = new ArrayList<>();
 		try {
 			classes = ReflectionUtil.getClassesByPackage(packageName, IRecorder.class);
 		} catch (Exception e) {
 			log.error(e, e);
 		}
-		log.debug("包：{}，共扫描类：{}个。", packageName, classes.size());
+		log.debug("package：{}，scan classes：{}。", packageName, classes.size());
 		for (Class<?> temp : classes) {
 			registTable((Class<? extends IRecorder>) temp);
 		}
@@ -67,17 +68,20 @@ public class RecorderChecker {
 	 * 开始执行检查
 	 * 
 	 * @param con
+	 * @throws SQLException
+	 * @throws RecorderCheckException
 	 * @throws Exception
 	 */
-	public void executeCheck(Connection con) throws Exception {
-		log.info("开始检查所有日志表结构...");
+	public void executeCheck(Connection con) throws SQLException, RecorderCheckException {
+		log.info("start check all recorders...");
 		for (Class<? extends IRecorder> clss : tables.values()) {
 			executeCheck(con, clss);
 		}
-		log.info("检查所有日志表结构完毕。");
+		log.info("check all recorders done。");
 	}
 
-	private void executeCheck(Connection con, Class<? extends IRecorder> clss) throws Exception {
+	private void executeCheck(Connection con, Class<? extends IRecorder> clss)
+			throws SQLException, RecorderCheckException {
 		// if (!AbstractLog.class.isAssignableFrom(clss)) {
 		// return;
 		// }
@@ -93,7 +97,7 @@ public class RecorderChecker {
 			if (!logTableName.startsWith(clss.getSimpleName().toLowerCase())) {
 				continue;
 			}
-			log.info("开始检查表结构：" + logTableName);
+			log.info("start check：" + logTableName);
 			TableInfo columnDefine = RecorderUtil.getColumnDefine(con, logTableName);
 			List<ColumnInfo> increaseList = new ArrayList<>();
 			List<String> decreaseList = new ArrayList<>();
@@ -107,7 +111,7 @@ public class RecorderChecker {
 				}
 				// 这里要检查一下字段是否是公共的，因为ReflectASM只能反射public的字段
 				if (!Modifier.isPublic(field.getModifiers())) {
-					throw new Exception("日志字段：" + field.getName() + "必须为公共字段!");
+					throw new RecorderCheckException("recorder's field：" + field.getName() + " must be public!");
 				}
 				String tableFieldName = field.getName();
 				ColumnInfo info = new ColumnInfo();
@@ -124,7 +128,8 @@ public class RecorderChecker {
 						if (RecorderUtil.ableChange(info, source)) {
 							modifyList.add(info);
 						} else {
-							throw new Exception("检测到变动但不允许变动,表名：" + logTableName + ",new:" + info + ",old:" + source);
+							throw new RecorderCheckException("unable to change column,table：" + logTableName + ",new:"
+									+ info + ",old:" + source);
 						}
 					}
 				}
@@ -136,8 +141,7 @@ public class RecorderChecker {
 				}
 				boolean contains = false;
 				for (Field field : logFields) {
-					if (field.getAnnotation(Column.class) != null
-							&& field.getName().equals(info.getTableFieldName())) {
+					if (field.getAnnotation(Column.class) != null && field.getName().equals(info.getTableFieldName())) {
 						contains = true;
 						break;
 					}
@@ -151,9 +155,8 @@ public class RecorderChecker {
 				try (PreparedStatement prepareStatement = con.prepareStatement(RecorderUtil.buildColumnIncreaseSqlMYSQL(
 						logTableName, col.getTableFieldName(), col.getType(), col.getSize(), col.getComment()));) {
 					if (prepareStatement.executeUpdate() == 0) {
-						SQLException sqlException = new SQLException("add column failed，logger:" + logTableName
-								+ "-----column:" + col.getTableFieldName() + " " + col.getType() + " " + col.getSize());
-						log.error(sqlException, sqlException);
+						log.error("add column failed，logger:" + logTableName + "-----column:" + col.getTableFieldName()
+								+ " " + col.getType() + " " + col.getSize());
 					} else {
 						log.info("add column success，logger:" + logTableName + "-----column:" + col.getTableFieldName()
 								+ " " + col.getType() + " " + col.getSize());
@@ -166,9 +169,7 @@ public class RecorderChecker {
 				try (PreparedStatement prepareStatement = con
 						.prepareStatement(RecorderUtil.buildColumnDecreaseSqlMYSQL(logTableName, colName));) {
 					if (prepareStatement.executeUpdate() == 0) {
-						SQLException sqlException = new SQLException(
-								"delete column failed，logger:" + logTableName + "-----column:" + colName);
-						log.error(sqlException, sqlException);
+						log.error("delete column failed，logger:" + logTableName + "-----column:" + colName);
 					} else {
 						log.info("delete column success，logger:" + logTableName + "-----column:" + colName);
 					}
@@ -181,9 +182,8 @@ public class RecorderChecker {
 				try (PreparedStatement prepareStatement = con.prepareStatement(RecorderUtil.buildColumnModifySqlMYSQL(
 						logTableName, col.getTableFieldName(), col.getType(), col.getSize(), col.getComment()));) {
 					if (prepareStatement.executeUpdate() == 0) {
-						SQLException sqlException = new SQLException("change column failed,logger:" + logTableName
-								+ "-----column:" + col.getTableFieldName() + " " + col.getType() + " " + col.getSize());
-						log.error(sqlException, sqlException);
+						log.error("change column failed,logger:" + logTableName + "-----column:"
+								+ col.getTableFieldName() + " " + col.getType() + " " + col.getSize());
 					} else {
 						log.info("change column success,logger:" + logTableName + "-----column:"
 								+ col.getTableFieldName() + " " + col.getType() + " " + col.getSize());
@@ -195,7 +195,6 @@ public class RecorderChecker {
 			log.info("check recorder logger:" + logTableName + "done！");
 		}
 	}
-
 
 	public Class<? extends IRecorder> getTableClass(String tableName) {
 		return tables.get(tableName);

@@ -37,59 +37,59 @@ public class RecorderUtil {
 	static {
 		// bigint可变动列表
 		Set<SQLType> bigintlist = new HashSet<>();
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_bigint, bigintlist);
-		bigintlist.add(SQLType.MYSQL_varchar);
-		bigintlist.add(SQLType.MYSQL_longtext);
-		bigintlist.add(SQLType.MYSQL_text);
-		bigintlist.add(SQLType.MYSQL_bigint);
+		CHANGE_ALLOW_MAP.put(SQLType.BIGINT, bigintlist);
+		bigintlist.add(SQLType.VARCHAR);
+		bigintlist.add(SQLType.LONGTEXT);
+		bigintlist.add(SQLType.TEXT);
+		bigintlist.add(SQLType.BIGINT);
 		// bit可变动列表
 		Set<SQLType> bitlist = new HashSet<>();
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_bit, bitlist);
-		bitlist.add(SQLType.MYSQL_longtext);
-		bitlist.add(SQLType.MYSQL_varchar);
-		bitlist.add(SQLType.MYSQL_text);
-		bitlist.add(SQLType.MYSQL_bigint);
-		bitlist.add(SQLType.MYSQL_integer);
-		bitlist.add(SQLType.MYSQL_int);
-		bitlist.add(SQLType.MYSQL_bit);
+		CHANGE_ALLOW_MAP.put(SQLType.BIT, bitlist);
+		bitlist.add(SQLType.LONGTEXT);
+		bitlist.add(SQLType.VARCHAR);
+		bitlist.add(SQLType.TEXT);
+		bitlist.add(SQLType.BIGINT);
+		bitlist.add(SQLType.INTEGER);
+		bitlist.add(SQLType.INT);
+		bitlist.add(SQLType.BIT);
 		// int可变动列表
 		Set<SQLType> intlist = new HashSet<>();
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_int, intlist);
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_integer, intlist);
-		intlist.add(SQLType.MYSQL_longtext);
-		intlist.add(SQLType.MYSQL_varchar);
-		intlist.add(SQLType.MYSQL_text);
-		intlist.add(SQLType.MYSQL_bigint);
-		intlist.add(SQLType.MYSQL_integer);
-		intlist.add(SQLType.MYSQL_int);
+		CHANGE_ALLOW_MAP.put(SQLType.INT, intlist);
+		CHANGE_ALLOW_MAP.put(SQLType.INTEGER, intlist);
+		intlist.add(SQLType.LONGTEXT);
+		intlist.add(SQLType.VARCHAR);
+		intlist.add(SQLType.TEXT);
+		intlist.add(SQLType.BIGINT);
+		intlist.add(SQLType.INTEGER);
+		intlist.add(SQLType.INT);
 		// short可变动列表
 		Set<SQLType> shortlist = new HashSet<>();
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_tinyint, shortlist);
-		shortlist.add(SQLType.MYSQL_longtext);
-		shortlist.add(SQLType.MYSQL_varchar);
-		shortlist.add(SQLType.MYSQL_text);
-		shortlist.add(SQLType.MYSQL_bigint);
-		shortlist.add(SQLType.MYSQL_int);
-		shortlist.add(SQLType.MYSQL_integer);
-		shortlist.add(SQLType.MYSQL_tinyint);
+		CHANGE_ALLOW_MAP.put(SQLType.TINYINT, shortlist);
+		shortlist.add(SQLType.LONGTEXT);
+		shortlist.add(SQLType.VARCHAR);
+		shortlist.add(SQLType.TEXT);
+		shortlist.add(SQLType.BIGINT);
+		shortlist.add(SQLType.INT);
+		shortlist.add(SQLType.INTEGER);
+		shortlist.add(SQLType.TINYINT);
 		// varchar变动列表
 		Set<SQLType> varcharlist = new HashSet<>();
-		varcharlist.add(SQLType.MYSQL_longtext);
-		varcharlist.add(SQLType.MYSQL_varchar);
-		varcharlist.add(SQLType.MYSQL_text);
-		varcharlist.add(SQLType.MYSQL_int);
-		varcharlist.add(SQLType.MYSQL_bigint);
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_varchar, varcharlist);
+		varcharlist.add(SQLType.LONGTEXT);
+		varcharlist.add(SQLType.VARCHAR);
+		varcharlist.add(SQLType.TEXT);
+		varcharlist.add(SQLType.INT);
+		varcharlist.add(SQLType.BIGINT);
+		CHANGE_ALLOW_MAP.put(SQLType.VARCHAR, varcharlist);
 		// text变动列表
 		Set<SQLType> text = new HashSet<>();
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_text, text);
-		text.add(SQLType.MYSQL_longtext);
-		text.add(SQLType.MYSQL_text);
-		text.add(SQLType.MYSQL_varchar);
+		CHANGE_ALLOW_MAP.put(SQLType.TEXT, text);
+		text.add(SQLType.LONGTEXT);
+		text.add(SQLType.TEXT);
+		text.add(SQLType.VARCHAR);
 		// longtext变动列表
 		Set<SQLType> longtextlist = new HashSet<>();
-		CHANGE_ALLOW_MAP.put(SQLType.MYSQL_longtext, longtextlist);
-		longtextlist.add(SQLType.MYSQL_longtext);
+		CHANGE_ALLOW_MAP.put(SQLType.LONGTEXT, longtextlist);
+		longtextlist.add(SQLType.LONGTEXT);
 
 	}
 
@@ -157,14 +157,13 @@ public class RecorderUtil {
 			}
 			SQLType type = annotation.type();
 			int size = annotation.size();
-			if (type == SQLType.MYSQL_varchar && size <= 0) {
+			if (type == SQLType.VARCHAR && size <= 0) {
 				size = 255;
 			}
-			String sqlType = type.getValue();
 			String sizeStr = size > 0 ? "(" + size + ")" : "";
 			String comment = annotation.comment();
 			String tableFieldName = "`" + field.getName() + "`";
-			createTableBuffer.append(",").append(line()).append(tableFieldName).append(" ").append(sqlType)
+			createTableBuffer.append(",").append(line()).append(tableFieldName).append(" ").append(type.name())
 					.append(sizeStr).append(" null comment ").append("'").append(comment).append("'");
 		}
 		createTableBuffer.append(")");
@@ -196,7 +195,7 @@ public class RecorderUtil {
 		while (columns.next()) {
 			ColumnInfo info = new ColumnInfo();
 			info.setTableFieldName(columns.getString("COLUMN_NAME"));
-			info.setType(columns.getString("TYPE_NAME").toLowerCase());
+			info.setType(SQLType.valueOf(columns.getString("TYPE_NAME")));
 			info.setSize(columns.getInt("COLUMN_SIZE"));
 			info.setNullable(columns.getBoolean("IS_NULLABLE"));
 			tableInfo.getColumnInfos().put(info.getTableFieldName(), info);
@@ -239,9 +238,9 @@ public class RecorderUtil {
 	 * @param fieldNameAndType
 	 * @return
 	 */
-	public static String buildColumnIncreaseSqlMYSQL(String tableName, String fieldName, String type, int size,
+	public static String buildColumnIncreaseSqlMYSQL(String tableName, String fieldName, SQLType type, int size,
 			String comment) {
-		String sql = "alter table `" + tableName + "` add column `" + fieldName + "` " + type
+		String sql = "alter table `" + tableName + "` add column `" + fieldName + "` " + type.name()
 				+ (size > 0 ? "(" + size + ")" : "varchar".equals(type) ? "(255)" : "") + " comment '" + comment + "';";
 		log.debug(sql);
 		return sql;
@@ -267,53 +266,46 @@ public class RecorderUtil {
 	 * @param fieldNameAndType
 	 * @return
 	 */
-	public static String buildColumnModifySqlMYSQL(String tableName, String fieldName, String type, int size,
+	public static String buildColumnModifySqlMYSQL(String tableName, String fieldName, SQLType type, int size,
 			String comment) {
-		String sql = "alter table `" + tableName + "` modify column `" + fieldName + "` " + type
+		String sql = "alter table `" + tableName + "` modify column `" + fieldName + "` " + type.name()
 				+ (size > 0 ? "(" + size + ")" : "varchar".equals(type) ? "(255)" : "") + " comment '" + comment + "';";
 		log.debug(sql);
 		return sql;
 	}
 
 	public static boolean isSame(ColumnInfo now, ColumnInfo old) {
-		if (((now.getType().equals(SQLType.MYSQL_int.getValue()))
-				|| (now.getType().equals(SQLType.MYSQL_integer.getValue()))
-				|| (now.getType().startsWith(SQLType.MYSQL_int.getValue())))
-				&& ((old.getType().equals(SQLType.MYSQL_integer.getValue()))
-						|| (old.getType().equals(SQLType.MYSQL_int.getValue()))
-						|| (old.getType().startsWith(SQLType.MYSQL_int.getValue())))) {
+		if (((now.getType().equals(SQLType.INT)) || (now.getType().equals(SQLType.INTEGER))
+				|| (now.getType().name().startsWith(SQLType.INT.name())))
+				&& ((old.getType().equals(SQLType.INTEGER)) || (old.getType().equals(SQLType.INT))
+						|| (old.getType().name().startsWith(SQLType.INT.name())))) {
 			return true;
 		}
 
-		if (now.getType().equals(SQLType.MYSQL_bigint.getValue()) && old.getType().equals(now.getType())) {
+		if (now.getType().equals(SQLType.BIGINT) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if (now.getType().equals(SQLType.MYSQL_text.getValue()) && old.getType().equals(now.getType())) {
+		if (now.getType().equals(SQLType.TEXT) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if (now.getType().equals(SQLType.MYSQL_longtext.getValue()) && old.getType().equals(now.getType())) {
+		if (now.getType().equals(SQLType.LONGTEXT) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if (now.getType().equals(SQLType.MYSQL_bit.getValue()) && old.getType().equals(now.getType())) {
+		if (now.getType().equals(SQLType.BIT) && old.getType().equals(now.getType())) {
 			return true;
 		}
-		if (now.getType().equals(SQLType.MYSQL_tinyint.getValue()) && old.getType().equals(now.getType())) {
+		if (now.getType().equals(SQLType.TINYINT) && old.getType().equals(now.getType())) {
 			return true;
 		}
 		return now.getType().equals(old.getType()) && now.getSize() <= old.getSize();
 	}
 
 	public static boolean ableChange(ColumnInfo info, ColumnInfo info2) {
-		SQLType typeByValue = SQLType.getTypeByValue(info.getType());
-		if (typeByValue == null) {
-			return false;
-		}
-		Set<SQLType> set = CHANGE_ALLOW_MAP.get(typeByValue);
+		Set<SQLType> set = CHANGE_ALLOW_MAP.get(info.getType());
 		if (set == null) {
 			return false;
 		}
-		SQLType typeByValue2 = SQLType.getTypeByValue(info2.getType());
-		return set.contains(typeByValue2);
+		return set.contains(info2.getType());
 	}
 
 	private static String line() {

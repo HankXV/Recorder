@@ -112,7 +112,7 @@ public class RecorderChecker {
 				String tableFieldName = field.getName();
 				ColumnInfo info = new ColumnInfo();
 				info.setTableFieldName(tableFieldName);
-				info.setType(annotation.type().getValue());
+				info.setType(annotation.type());
 				info.setSize(annotation.size());
 				info.setComment(annotation.comment());
 				if (!columnDefine.getColumnInfos().containsKey(tableFieldName)) {

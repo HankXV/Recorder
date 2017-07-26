@@ -8,16 +8,16 @@ package org.slingerxv.recorder;
  */
 public class ColumnInfo {
 	private String tableFieldName;
-	private String type;
+	private SQLType type;
 	private int size;
 	private boolean nullable;
 	private String comment;
 
-	public String getType() {
+	public SQLType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(SQLType type) {
 		this.type = type;
 	}
 

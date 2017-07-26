@@ -68,7 +68,7 @@ public class TableChecker {
 				}
 				ColumnInfo now = new ColumnInfo();
 				now.setTableFieldName(col);
-				now.setType(annotation.type().getValue());
+				now.setType(annotation.type());
 				now.setSize(annotation.size());
 				now.setNullable(annotation.isNullable());
 				if (!columnDefine.getColumnInfos().containsKey(col)) {

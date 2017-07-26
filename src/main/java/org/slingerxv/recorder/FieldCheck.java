@@ -26,7 +26,7 @@ public @interface FieldCheck {
 	 * 
 	 * @return
 	 */
-	SQLType type() default SQLType.MYSQL_int;
+	SQLType type() default SQLType.INT;
 
 	int size() default 0;
 

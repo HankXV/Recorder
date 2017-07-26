@@ -22,7 +22,7 @@ public @interface Column {
 	 * 
 	 * @return sql类型
 	 */
-    SQLType type() default SQLType.MYSQL_int;
+    SQLType type() default SQLType.INT;
 
 	/**
 	 * 大小

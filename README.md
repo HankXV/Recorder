@@ -9,11 +9,11 @@ mysql-connector-java-5.x
 # Quick Start
 ```java
 	public class UserLog extends TimeBasedLog {
-		@Column(type = SQLType.MYSQL_varchar, size = 255, comment = "user name")
+		@Column(type = SQLType.VARCHAR, size = 255, comment = "user name")
 		public String name;
 		@Column(comment = "user age")
 		public int age;
-		@Column(type = SQLType.MYSQL_varchar, size = 255, comment = "user address")
+		@Column(type = SQLType.VARCHAR, size = 255, comment = "user address")
 		public String address;
 	
 		@Override

@@ -8,83 +8,65 @@ package org.slingerxv.recorder;
  */
 public enum SQLType {
 	//
-	MYSQL_tinyint("tinyint"),
+	TINYINT,
 	//
-	MYSQL_smallint("smallint"),
+	SMALLINT,
 	//
-	MYSQL_mediumint("mediumint"),
+	MEDIUMINT,
 	//
-	MYSQL_int("int"),
+	INT,
 	//
-	MYSQL_integer("integer"),
+	INTEGER,
 	//
-	MYSQL_bigint("bigint"),
+	BIGINT,
 	//
-	MYSQL_bit("bit"),
+	BIT,
 	//
-	MYSQL_real("real"),
+	REAL,
 	//
-	MYSQL_double("double"),
+	DOUBLE,
 	//
-	MYSQL_float("float"),
+	FLOAT,
 	//
-	MYSQL_decimal("decimal"),
+	DECIMAL,
 	//
-	MYSQL_numeric("numeric"),
+	NUMERIC,
 	//
-	MYSQL_char("char"),
+	CHAR,
 	//
-	MYSQL_varchar("varchar"),
+	VARCHAR,
 	//
-	MYSQL_date("date"),
+	DATE,
 	//
-	MYSQL_time("time"),
+	TIME,
 	//
-	MYSQL_year("year"),
+	YEAR,
 	//
-	MYSQL_timestamp("timestamp"),
+	TIMESTAMP,
 	//
-	MYSQL_datetime("datetime"),
+	DATETIME,
 	//
-	MYSQL_tinyblob("tinyblob"),
+	TINYBLOB,
 	//
-	MYSQL_blob("blob"),
+	BLOB,
 	//
-	MYSQL_mediumblob("mediumblob"),
+	MEDIUMBLOB,
 	//
-	MYSQL_longblob("longblob"),
+	LONGBLOB,
 	//
-	MYSQL_tinytext("tinytext"),
+	TINYTEXT,
 	//
-	MYSQL_text("text"),
+	TEXT,
 	//
-	MYSQL_mediumtext("mediumtext"),
+	MEDIUMTEXT,
 	//
-	MYSQL_longtext("longtext"),
+	LONGTEXT,
 	//
-	MYSQL_enum("enum"),
+	ENUM,
 	//
-	MYSQL_set("set"),
+	SET,
 	//
-	MYSQL_binary("binary"),
+	BINARY,
 	//
-	MYSQL_varbinary("varbinary"),;
-	private String value;
-
-	SQLType(String value) {
-		this.value = value;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public static SQLType getTypeByValue(String value) {
-		for (SQLType temp : SQLType.values()) {
-			if (temp.getValue().equals(value)) {
-				return temp;
-			}
-		}
-		return null;
-	}
+	VARBINARY,;
 }

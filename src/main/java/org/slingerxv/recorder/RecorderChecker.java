@@ -27,13 +27,6 @@ public class RecorderChecker {
 		tables.clear();
 	}
 
-	/**
-	 * 注册一个bean，table名称默认为bean的简单名称小写
-	 * 
-	 * @param bean
-	 *            JavaBean
-	 * @throws RecorderCheckException
-	 */
 	public void registTable(Class<? extends IRecorder> bean) throws RecorderCheckException {
 		String lowerCase = bean.getSimpleName().toLowerCase();
 		if (tables.containsKey(lowerCase)) {
@@ -42,15 +35,6 @@ public class RecorderChecker {
 		tables.put(lowerCase, bean);
 	}
 
-	/**
-	 * 扫描包内AbstractLog的类型
-	 * 
-	 * @see TimeBasedLog
-	 * @param packageName
-	 * @throws RecorderCheckException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
 	@SuppressWarnings("unchecked")
 	public void registTable(String packageName) throws RecorderCheckException, ClassNotFoundException, IOException {
 		List<Class<?>> classes = new ArrayList<>();
@@ -61,13 +45,6 @@ public class RecorderChecker {
 		}
 	}
 
-	/**
-	 * 开始执行检查
-	 * 
-	 * @param con
-	 * @throws SQLException
-	 * @throws RecorderCheckException
-	 */
 	public void executeCheck(Connection con) throws SQLException, RecorderCheckException {
 		log.info("start check all recorders...");
 		for (Class<? extends IRecorder> clss : tables.values()) {

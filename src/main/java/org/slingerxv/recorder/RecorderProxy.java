@@ -71,9 +71,12 @@ public class RecorderProxy {
 	 * 执行一条日志记录的插入
 	 * 
 	 * @param baseLog
+	 *            日志实体
 	 * @return
 	 * @throws RecorderProxyAlreadyStopException
+	 *             代理已经停止异常
 	 * @throws RecorderTaskOverloadException
+	 *             代理任务队列超过限制异常
 	 */
 	public RecorderProxy execute(final IRecorder alog)
 			throws RecorderProxyAlreadyStopException, RecorderTaskOverloadException {
@@ -122,6 +125,13 @@ public class RecorderProxy {
 		return this;
 	}
 
+	/**
+	 * 通过表名获取其类
+	 * 
+	 * @param tableName
+	 *            表名
+	 * @return 表名对应的类
+	 */
 	public Class<? extends IRecorder> getTableClassByName(String tableName) {
 		return checker.getTableClass(tableName);
 	}
@@ -130,9 +140,12 @@ public class RecorderProxy {
 	 * 查询日志条数
 	 * 
 	 * @param tableName
+	 *            表名
 	 * @param startTime
+	 *            开始时间戳
 	 * @param endTime
-	 * @return
+	 *            结束时间戳
+	 * @return 日志条数
 	 * @throws SQLException
 	 * @throws RecorderQueryBuilderException
 	 * @throws RecorderProxyAlreadyStopException
@@ -150,8 +163,11 @@ public class RecorderProxy {
 	 * 查询日志条数
 	 * 
 	 * @param tableName
+	 *            表名
 	 * @param startTime
+	 *            开始时间戳
 	 * @param endTime
+	 *            结束时间戳
 	 * @return
 	 * @throws RecorderProxyAlreadyStopException
 	 * @throws RecorderQueryBuilderException
@@ -172,6 +188,20 @@ public class RecorderProxy {
 		}
 	}
 
+	/**
+	 * 查找相关的表
+	 * 
+	 * @param clss
+	 *            表类
+	 * @param startTime
+	 *            开始时间戳
+	 * @param endTime
+	 *            结束时间戳
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws SQLException
+	 */
 	public Collection<String> queryRelativeTables(Class<? extends IRecorder> clss, long startTime, long endTime)
 			throws InstantiationException, IllegalAccessException, SQLException {
 		// 获取相关表
@@ -193,11 +223,17 @@ public class RecorderProxy {
 	 * 查询某段日期的日志
 	 * 
 	 * @param tableName
+	 *            表名
 	 * @param startTime
+	 *            开始时间戳
 	 * @param endTime
+	 *            结束时间戳
 	 * @param startIndex
+	 *            分页索引
 	 * @param size
+	 *            每页大小
 	 * @param orderParam
+	 *            排序参数
 	 * @return
 	 * @throws SQLException
 	 * @throws RecorderQueryBuilderException
@@ -221,8 +257,11 @@ public class RecorderProxy {
 	 * 查询某段日期的日志
 	 * 
 	 * @param clss
+	 *            日志类
 	 * @param startTime
+	 *            开始时间戳
 	 * @param endTime
+	 *            结束时间戳
 	 * @return
 	 * @throws RecorderProxyAlreadyStopException
 	 * @throws RecorderQueryBuilderException
@@ -261,11 +300,6 @@ public class RecorderProxy {
 		return result;
 	}
 
-	/**
-	 * 获取当前队列中日志任务的数量
-	 * 
-	 * @return
-	 */
 	public long getTaksCount() {
 		return logTaskQueue.size();
 	}
@@ -278,6 +312,16 @@ public class RecorderProxy {
 		return lostLogNum.longValue();
 	}
 
+	/**
+	 * 开启代理
+	 * 
+	 * @return this
+	 * @throws RecorderProxyAlreadyStartException
+	 * @throws RecorderCheckException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public RecorderProxy startServer() throws RecorderProxyAlreadyStartException, RecorderCheckException, SQLException,
 			ClassNotFoundException, IOException {
 		if (!isStop) {
@@ -312,6 +356,12 @@ public class RecorderProxy {
 		return this;
 	}
 
+	/**
+	 * 停止代理
+	 * 
+	 * @return this
+	 * @throws RecorderProxyAlreadyStopException
+	 */
 	public RecorderProxy stopServer() throws RecorderProxyAlreadyStopException {
 		if (isStop) {
 			throw new RecorderProxyAlreadyStopException();

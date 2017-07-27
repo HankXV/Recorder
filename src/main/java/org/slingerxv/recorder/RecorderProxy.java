@@ -35,26 +35,26 @@ public class RecorderProxy {
 	private static Logger log = LogManager.getLogger();
 	private ThreadPoolExecutor threadPool;
 	private BlockingQueue<Runnable> logTaskQueue;
-	private RecorderChecker checker = new RecorderChecker();
+	private final RecorderChecker checker = new RecorderChecker();
 	private boolean isStop = true;
-	private LongAdder doneLogNum = new LongAdder();
-	private LongAdder lostLogNum = new LongAdder();
+	private final LongAdder doneLogNum = new LongAdder();
+	private final LongAdder lostLogNum = new LongAdder();
 	// -- config
 	// 扫描项目包名(日志结构检查)
 	private String[] scanPackages;
 	// 任务线程池基本线程数
-	private int threadCorePoolSize;
+	private final int threadCorePoolSize;
 	// 任务线程池最大线程数
-	private int threadMaximumPoolSize;
+	private final int threadMaximumPoolSize;
 	// 任务上限数量
-	private int taskMaxSize;
+	private final int taskMaxSize;
 	// 数据库引擎
-	private String dbEngine;
+	private final String dbEngine;
 	// 编码
-	private String charset;
+	private final String charset;
 	// 自定义线程池
-	private ThreadPoolExecutor customInsertThreadPool;
-	private Supplier<DataSource> dataSourceFactory;
+	private final ThreadPoolExecutor customInsertThreadPool;
+	private final Supplier<DataSource> dataSourceFactory;
 
 	private RecorderProxy(RecorderProxyBuilder builder) {
 		this.scanPackages = builder.scanPackages.toArray(new String[0]);
@@ -79,9 +79,9 @@ public class RecorderProxy {
 	 *             代理任务队列超过限制异常
 	 */
 	public RecorderProxy execute(final IRecorder alog)
-			throws RecorderProxyAlreadyStopException, RecorderTaskOverloadException {
+			throws RecorderProxyStateException, RecorderTaskOverloadException {
 		if (isStop) {
-			throw new RecorderProxyAlreadyStopException();
+			throw new RecorderProxyStateException("stop");
 		}
 
 		if (alog != null) {
@@ -151,7 +151,7 @@ public class RecorderProxy {
 	 * @throws RecorderProxyAlreadyStopException
 	 */
 	public int queryCount(String tableName, RecorderQueryBuilder builder)
-			throws RecorderProxyAlreadyStopException, RecorderQueryBuilderException, SQLException {
+			throws RecorderProxyStateException, RecorderQueryBuilderException, SQLException {
 		Class<? extends IRecorder> tableClass = getTableClassByName(tableName);
 		if (tableClass == null) {
 			return 0;
@@ -174,9 +174,9 @@ public class RecorderProxy {
 	 * @throws SQLException
 	 */
 	public int queryCount(Class<? extends IRecorder> clss, RecorderQueryBuilder builder)
-			throws RecorderProxyAlreadyStopException, RecorderQueryBuilderException, SQLException {
+			throws RecorderProxyStateException, RecorderQueryBuilderException, SQLException {
 		if (isStop) {
-			throw new RecorderProxyAlreadyStopException();
+			throw new RecorderProxyStateException("stop");
 		}
 		String buildSelectTableSql = RecorderUtil.buildSelectCountTableSqlMYSQL(builder);
 		try (Connection connection = dataSourceFactory.get().getConnection();
@@ -244,7 +244,7 @@ public class RecorderProxy {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends IRecorder> List<T> query(String tableName, RecorderQueryBuilder builder)
-			throws InstantiationException, IllegalAccessException, RecorderProxyAlreadyStopException,
+			throws InstantiationException, IllegalAccessException, RecorderProxyStateException,
 			RecorderQueryBuilderException, SQLException {
 		Class<? extends IRecorder> tableClass = getTableClassByName(tableName);
 		if (tableClass == null) {
@@ -270,10 +270,10 @@ public class RecorderProxy {
 	 * @throws InstantiationException
 	 */
 	public <T extends IRecorder> List<T> query(Class<T> clss, RecorderQueryBuilder builder)
-			throws RecorderProxyAlreadyStopException, RecorderQueryBuilderException, SQLException,
-			InstantiationException, IllegalAccessException {
+			throws RecorderProxyStateException, RecorderQueryBuilderException, SQLException, InstantiationException,
+			IllegalAccessException {
 		if (isStop) {
-			throw new RecorderProxyAlreadyStopException();
+			throw new RecorderProxyStateException("stop");
 		}
 		List<T> result = new ArrayList<>();
 		String buildSelectTableSql = RecorderUtil.buildSelectTableSqlMYSQL(builder);
@@ -284,7 +284,7 @@ public class RecorderProxy {
 				T newInstance = clss.newInstance();
 				List<Field> logFields = RecorderUtil.getLogFields(clss);
 				for (Field field : logFields) {
-					Column annotation = field.getAnnotation(Column.class);
+					Col annotation = field.getAnnotation(Col.class);
 					if (annotation == null) {
 						continue;
 					}
@@ -322,10 +322,10 @@ public class RecorderProxy {
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	public RecorderProxy startServer() throws RecorderProxyAlreadyStartException, RecorderCheckException, SQLException,
+	public RecorderProxy startServer() throws RecorderProxyStateException, RecorderCheckException, SQLException,
 			ClassNotFoundException, IOException {
 		if (!isStop) {
-			throw new RecorderProxyAlreadyStartException();
+			throw new RecorderProxyStateException("stop");
 		}
 		// 初始化任务线程池
 		if (customInsertThreadPool == null) {
@@ -362,9 +362,9 @@ public class RecorderProxy {
 	 * @return this
 	 * @throws RecorderProxyAlreadyStopException
 	 */
-	public RecorderProxy stopServer() throws RecorderProxyAlreadyStopException {
+	public RecorderProxy stopServer() throws RecorderProxyStateException {
 		if (isStop) {
-			throw new RecorderProxyAlreadyStopException();
+			throw new RecorderProxyStateException("stop");
 		}
 		this.isStop = true;
 		List<Runnable> shutdownNow = threadPool.shutdownNow();
@@ -426,8 +426,8 @@ public class RecorderProxy {
 		 * @param packageName
 		 * @return
 		 */
-		public RecorderProxyBuilder addScanPackage(String... packageNames) {
-			for (String temp : Objects.requireNonNull(packageNames, "packageNames")) {
+		public RecorderProxyBuilder addScanPackage(final String... packageNames) {
+			for (final String temp : Objects.requireNonNull(packageNames, "packageNames")) {
 				this.scanPackages.add(Objects.requireNonNull(temp, "packageName"));
 			}
 			return this;
@@ -439,7 +439,7 @@ public class RecorderProxy {
 		 * @param size
 		 * @return
 		 */
-		public RecorderProxyBuilder taskMaxSize(int size) {
+		public RecorderProxyBuilder taskMaxSize(final int size) {
 			if (size > 0) {
 				this.taskMaxSize = size;
 			}
@@ -452,7 +452,7 @@ public class RecorderProxy {
 		 * @param size
 		 * @return
 		 */
-		public RecorderProxyBuilder threadCorePoolSize(int size) {
+		public RecorderProxyBuilder threadCorePoolSize(final int size) {
 			if (size > 0) {
 				this.threadCorePoolSize = size;
 			}
@@ -465,7 +465,7 @@ public class RecorderProxy {
 		 * @param size
 		 * @return
 		 */
-		public RecorderProxyBuilder threadMaximumPoolSize(int size) {
+		public RecorderProxyBuilder threadMaximumPoolSize(final int size) {
 			if (size > 0) {
 				this.threadMaximumPoolSize = size;
 			}
@@ -478,7 +478,7 @@ public class RecorderProxy {
 		 * @param dbEngine
 		 * @return
 		 */
-		public RecorderProxyBuilder dbEngine(String dbEngine) {
+		public RecorderProxyBuilder dbEngine(final String dbEngine) {
 			this.dbEngine = Objects.requireNonNull(dbEngine, "dbEngine");
 			return this;
 		}
@@ -489,7 +489,7 @@ public class RecorderProxy {
 		 * @param charset
 		 * @return
 		 */
-		public RecorderProxyBuilder charset(String charset) {
+		public RecorderProxyBuilder charset(final String charset) {
 			this.charset = Objects.requireNonNull(charset, "charset");
 			return this;
 		}
@@ -500,12 +500,12 @@ public class RecorderProxy {
 		 * @param threadPool
 		 * @return
 		 */
-		public RecorderProxyBuilder customInsertThreadPool(ThreadPoolExecutor threadPool) {
+		public RecorderProxyBuilder customInsertThreadPool(final ThreadPoolExecutor threadPool) {
 			this.customInsertThreadPool = Objects.requireNonNull(threadPool, "threadPool");
 			return this;
 		}
 
-		public RecorderProxyBuilder dataSource(Supplier<DataSource> dataSourceFactory) {
+		public RecorderProxyBuilder dataSource(final Supplier<DataSource> dataSourceFactory) {
 			this.dataSourceFactory = Objects.requireNonNull(dataSourceFactory, "dataSourceFactory");
 			return this;
 		}

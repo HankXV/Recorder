@@ -1,6 +1,6 @@
 package org.slingerxv.recorder;
 
-public class UserLog extends TimeBasedLog {
+public class UserLog2 extends TimeBasedLog {
 	@Col(type = SQLType.VARCHAR, size = 255, comment = "user name")
 	public String name;
 	@Col(comment = "user age")
@@ -10,6 +10,6 @@ public class UserLog extends TimeBasedLog {
 
 	@Override
 	public RollType rollType() {
-		return RollType.DAY_ROLL;
+		return RollType.MONTH_ROLL;
 	}
 }

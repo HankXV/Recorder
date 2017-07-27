@@ -30,10 +30,13 @@ import org.apache.logging.log4j.Logger;
  */
 public class RecorderUtil {
 	private static Logger log = LogManager.getLogger();
-	private static String PRIMARY_KEY_FIELD_NAME = "`pk_id`";
+	private static final String PRIMARY_KEY = "`pk_id`";
 	private static ConcurrentHashMap<Class<? extends IRecorder>, List<Field>> logFieldCache = new ConcurrentHashMap<>();
-
 	private static Map<SQLType, Set<SQLType>> CHANGE_ALLOW_MAP = new HashMap<>();
+
+	private RecorderUtil() {
+	}
+
 	static {
 		// bigint可变动列表
 		Set<SQLType> bigintlist = new HashSet<>();
@@ -149,9 +152,9 @@ public class RecorderUtil {
 		String tableName = getLogTableName(alog, System.currentTimeMillis());
 		List<Field> fieldAccessV2 = getLogFields(alog.getClass());
 		createTableBuffer.append("create table if not exists ").append(tableName).append(" (").append(line());
-		createTableBuffer.append(PRIMARY_KEY_FIELD_NAME + " int primary key not null auto_increment");
+		createTableBuffer.append(PRIMARY_KEY + " int primary key not null auto_increment");
 		for (Field field : fieldAccessV2) {
-			Column annotation = field.getAnnotation(Column.class);
+			Col annotation = field.getAnnotation(Col.class);
 			if (annotation == null) {
 				continue;
 			}
@@ -238,10 +241,11 @@ public class RecorderUtil {
 	 * @param fieldNameAndType
 	 * @return
 	 */
-	public static String buildColumnIncreaseSqlMYSQL(String tableName, String fieldName, SQLType type, int size,
-			String comment) {
-		String sql = "alter table `" + tableName + "` add column `" + fieldName + "` " + type.name()
-				+ (size > 0 ? "(" + size + ")" : "varchar".equals(type) ? "(255)" : "") + " comment '" + comment + "';";
+	public static String buildColumnIncreaseSqlMYSQL(final String tableName, final String fieldName, final SQLType type,
+			final int size, final String comment) {
+		final String sql = "alter table `" + tableName + "` add column `" + fieldName + "` " + type.name()
+				+ (size > 0 ? "(" + size + ")" : "varchar".equalsIgnoreCase(type.name()) ? "(255)" : "") + " comment '"
+				+ comment + "';";
 		log.debug(sql);
 		return sql;
 	}
@@ -266,10 +270,11 @@ public class RecorderUtil {
 	 * @param fieldNameAndType
 	 * @return
 	 */
-	public static String buildColumnModifySqlMYSQL(String tableName, String fieldName, SQLType type, int size,
-			String comment) {
-		String sql = "alter table `" + tableName + "` modify column `" + fieldName + "` " + type.name()
-				+ (size > 0 ? "(" + size + ")" : "varchar".equals(type) ? "(255)" : "") + " comment '" + comment + "';";
+	public static String buildColumnModifySqlMYSQL(final String tableName, final String fieldName, final SQLType type,
+			final int size, final String comment) {
+		final String sql = "alter table `" + tableName + "` modify column `" + fieldName + "` " + type.name()
+				+ (size > 0 ? "(" + size + ")" : "varchar".equalsIgnoreCase(type.name()) ? "(255)" : "") + " comment '"
+				+ comment + "';";
 		log.debug(sql);
 		return sql;
 	}
@@ -300,8 +305,8 @@ public class RecorderUtil {
 		return now.getType().equals(old.getType()) && now.getSize() <= old.getSize();
 	}
 
-	public static boolean ableChange(ColumnInfo info, ColumnInfo info2) {
-		Set<SQLType> set = CHANGE_ALLOW_MAP.get(info.getType());
+	public static boolean ableChange(final ColumnInfo info, final ColumnInfo info2) {
+		final Set<SQLType> set = CHANGE_ALLOW_MAP.get(info.getType());
 		if (set == null) {
 			return false;
 		}
@@ -319,11 +324,11 @@ public class RecorderUtil {
 	 *            日志类
 	 * @return [字段名，字段解释]
 	 */
-	public static List<String[]> getLogHeader(Class<? extends IRecorder> clss) {
+	public static List<String[]> getLogHeader(final Class<? extends IRecorder> clss) {
 		List<String[]> result = new ArrayList<>();
 		List<Field> fieldAccessV2 = getLogFields(clss);
 		for (Field field : fieldAccessV2) {
-			Column annotation = field.getAnnotation(Column.class);
+			Col annotation = field.getAnnotation(Col.class);
 			if (annotation == null) {
 				continue;
 			}
@@ -341,7 +346,7 @@ public class RecorderUtil {
 	 * @return 数据库表名列表
 	 * @throws SQLException
 	 */
-	public static List<String> getTableNames(Connection conn) throws SQLException {
+	public static List<String> getTableNames(final Connection conn) throws SQLException {
 		ResultSet tableRet = conn.getMetaData().getTables(null, "%", "%", null);
 		List<String> tablenames = new ArrayList<String>();
 		while (tableRet.next()) {
@@ -428,7 +433,7 @@ public class RecorderUtil {
 			if (Modifier.isStatic(field.getModifiers())) {
 				return false;
 			}
-			return field.getAnnotation(Column.class) != null;
+			return field.getAnnotation(Col.class) != null;
 		});
 		logFieldCache.put(logClass, fields);
 		return fields;

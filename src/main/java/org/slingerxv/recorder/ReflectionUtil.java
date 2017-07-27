@@ -132,8 +132,8 @@ public final class ReflectionUtil {
 	 * @param classes
 	 * @throws ClassNotFoundException
 	 */
-	public static void findAndAddClassesInPackageByFile(String packageName, String packagePath, final boolean recursive,
-			List<Class<?>> classes, Class<?> superClass) {
+	private static void findAndAddClassesInPackageByFile(String packageName, String packagePath,
+			final boolean recursive, List<Class<?>> classes, Class<?> superClass) {
 		// 获取此包的目录 建立一个File
 		File dir = new File(packagePath);
 		// 如果不存在或者 也不是目录就直接返回

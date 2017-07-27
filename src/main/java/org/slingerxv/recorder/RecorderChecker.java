@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class RecorderChecker {
-	private static Logger log = LogManager.getLogger();
+	private final static Logger log = LogManager.getLogger();
 	private HashMap<String, Class<? extends IRecorder>> tables = new HashMap<>();
 
 	public void clearTables() {
@@ -78,7 +78,7 @@ public class RecorderChecker {
 			// 检查增加字段
 			List<Field> logFields = RecorderUtil.getLogFields(clss);
 			for (Field field : logFields) {
-				Column annotation = field.getAnnotation(Column.class);
+				Col annotation = field.getAnnotation(Col.class);
 				if (annotation == null) {
 					continue;
 				}
@@ -114,7 +114,7 @@ public class RecorderChecker {
 				}
 				boolean contains = false;
 				for (Field field : logFields) {
-					if (field.getAnnotation(Column.class) != null && field.getName().equals(info.getTableFieldName())) {
+					if (field.getAnnotation(Col.class) != null && field.getName().equals(info.getTableFieldName())) {
 						contains = true;
 						break;
 					}

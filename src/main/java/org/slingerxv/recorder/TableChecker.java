@@ -136,12 +136,11 @@ public class TableChecker {
 		String table = annotation.value();
 		if (table == null || table.trim().length() == 0) {
 			registTable(bean, bean.getSimpleName());
-		} else if (annotation.shardingList() != null) {
-			for (String temp : annotation.shardingList()) {
+		} else {
+			String[] split = table.split("[,]");
+			for (String temp : split) {
 				registTable(bean, temp);
 			}
-		} else {
-			registTable(bean, table);
 		}
 	}
 

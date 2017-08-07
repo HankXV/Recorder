@@ -21,7 +21,5 @@ public @interface TableCheck {
 	 */
 	String value() default "";
 
-	String[] shardingList();
-
 	String charset() default "utf-8";
 }

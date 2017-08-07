@@ -17,7 +17,7 @@ public @interface FieldCheck {
 	/**
 	 * 表字段名
 	 * 
-	 * @return 表名称
+	 * @return 字段名称
 	 */
 	String value() default "";
 

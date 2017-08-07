@@ -41,6 +41,8 @@ mysql-connector-java-5.x
 		
 ```
 # 更新日志
+## v2.0-release
+	1.表检查器支持多表同Bean的检查(垂直分表)，表名逗号隔开
 ## v2.0-alpha
 	此版本为pre-release版本
 	1.减少了很多复杂的命名

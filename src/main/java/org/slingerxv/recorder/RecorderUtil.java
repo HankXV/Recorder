@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 日志辅助类
@@ -44,7 +44,7 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class RecorderUtil {
-	private static Logger log = LogManager.getLogger();
+	private static Logger log = LoggerFactory.getLogger(RecorderUtil.class);
 	private static final String PRIMARY_KEY = "`pk_id`";
 	private static ConcurrentHashMap<Class<? extends IRecorder>, List<Field>> logFieldCache = new ConcurrentHashMap<>();
 	private static Map<SQLType, Set<SQLType>> CHANGE_ALLOW_MAP = new HashMap<>();

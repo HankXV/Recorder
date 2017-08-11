@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 数据库表结构检查工具
@@ -33,7 +33,7 @@ import org.apache.logging.log4j.Logger;
  * @author hank
  */
 public class TableChecker {
-	private static Logger log = LogManager.getLogger();
+	private static Logger log = LoggerFactory.getLogger(TableChecker.class);
 	private ConcurrentHashMap<String, Class<?>> tables = new ConcurrentHashMap<>();
 
 	/**
@@ -192,8 +192,8 @@ public class TableChecker {
 		for (Class<?> temp : classes) {
 			TableCheck annotation = temp.getAnnotation(TableCheck.class);
 			if (annotation == null) {
-				log.error(new Exception("Table `" + temp.getSimpleName().toLowerCase()
-						+ "` need checked!!! Use @TableCheck and @FieldCheck"));
+				log.error("Table `" + temp.getSimpleName().toLowerCase()
+						+ "` need checked!!! Use @TableCheck and @FieldCheck");
 				continue;
 			}
 			registTable(temp);

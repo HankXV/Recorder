@@ -37,8 +37,8 @@ import java.util.function.Supplier;
 
 import javax.sql.DataSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 数据库日志记录服务器
@@ -47,7 +47,7 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class RecorderProxy {
-	private static Logger log = LogManager.getLogger();
+	private static Logger log = LoggerFactory.getLogger(RecorderProxy.class);
 	private ThreadPoolExecutor threadPool;
 	private BlockingQueue<Runnable> logTaskQueue;
 	private final RecorderChecker checker = new RecorderChecker();
@@ -131,7 +131,7 @@ public class RecorderProxy {
 						}
 					}
 				} catch (Exception e) {
-					log.error(e, e);
+					log.error(e.getMessage(), e);
 					log.error("log failed:" + alog);
 					lostLogNum.increment();
 				}
@@ -389,7 +389,7 @@ public class RecorderProxy {
 				task.run();
 				log.info("save log tasks,remain:" + shutdownNow.size());
 			} catch (Exception e) {
-				log.error(e, e);
+				log.error(e.getMessage(), e);
 			}
 		}
 		shutdownNow.clear();

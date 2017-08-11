@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 日志表结构变动检查器
@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class RecorderChecker {
-	private final static Logger log = LogManager.getLogger();
+	private final static Logger log = LoggerFactory.getLogger(RecorderChecker.class);
 	private HashMap<String, Class<? extends IRecorder>> tables = new HashMap<>();
 
 	public void clearTables() {
@@ -150,7 +150,7 @@ public class RecorderChecker {
 								+ " " + col.getType() + " " + col.getSize());
 					}
 				} catch (Exception e) {
-					log.error(e, e);
+					log.error(e.getMessage(), e);
 				}
 			}
 			for (String colName : decreaseList) {
@@ -162,7 +162,7 @@ public class RecorderChecker {
 						log.info("delete column success，logger:" + logTableName + "-----column:" + colName);
 					}
 				} catch (Exception e) {
-					log.error(e, e);
+					log.error(e.getMessage(), e);
 				}
 
 			}
@@ -177,7 +177,7 @@ public class RecorderChecker {
 								+ col.getTableFieldName() + " " + col.getType() + " " + col.getSize());
 					}
 				} catch (Exception e) {
-					log.error(e, e);
+					log.error(e.getMessage(), e);
 				}
 			}
 			log.info("check recorder logger:" + logTableName + "done！");

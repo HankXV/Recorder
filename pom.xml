@@ -159,4 +159,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<url>https://git.oschina.net/HankXV/Recorder</url>
 </project>

@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/HankXV/Recorder.svg?branch=master)](https://travis-ci.org/HankXV/Recorder)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8558598883684247a0e568b7ad30bf4d)](https://www.codacy.com/app/104381832/Recorder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=HankXV/Recorder&amp;utm_campaign=Badge_Grade)
 # 什么是Recorder？
 主要用于在游戏中**记录日志**或者流水(比如货币的花销流水，任务的完成日志)，方便后台统计和查询。此框架目前只适用于数据库 **MySQL\MariaDB**。<br>
 ![](/recorder-thumb.png)

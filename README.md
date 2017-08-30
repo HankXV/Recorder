@@ -4,6 +4,14 @@
 ## 环境要求
 Jdk8 or above<br>
 mysql-connector-java-5.x
+## Maven
+	<dependency>
+	    <groupId>org.slingerxv</groupId>
+	    <artifactId>recorder</artifactId>
+	    <version>2.0-alpha</version>
+	</dependency>
+## Gradle
+	compile 'org.slingerxv:recorder:2.0-alpha'
 # 快速开始
 建立一个日志的Bean
 

@@ -1,5 +1,5 @@
 [![](https://img.shields.io/badge/maven-v2.0--alpha-green.svg)](https://mvnrepository.com/artifact/org.slingerxv/recorder)
-[![](https://img.shields.io/badge/license-Apache 2-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![](https://img.shields.io/badge/license-Apache%202-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 # 什么是Recorder？
 主要用于在游戏中**记录日志**或者流水(比如货币的花销流水，任务的完成日志)，方便后台统计和查询。此框架目前只适用于数据库 **MySQL\MariaDB**。<br>
 ![](/recorder-thumb.png)

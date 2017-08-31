@@ -6,6 +6,12 @@
 	<version>2.0-alpha</version>
 	<name>recorder</name>
 	<description>A framework that helps you log in the database</description>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 	<properties>
 		<!-- 文件拷贝时的编码 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

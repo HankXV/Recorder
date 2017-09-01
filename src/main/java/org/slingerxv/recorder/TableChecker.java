@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TableChecker {
 	private static Logger log = LoggerFactory.getLogger(TableChecker.class);
-	private ConcurrentHashMap<String, Class<?>> tables = new ConcurrentHashMap<>();
+	private Map<String, Class<?>> tables = new ConcurrentHashMap<>();
 
 	/**
 	 * 从给定链接的数据库检查表结构

@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class RecorderUtil {
 	private static Logger log = LoggerFactory.getLogger(RecorderUtil.class);
 	private static final String PRIMARY_KEY = "`pk_id`";
-	private static ConcurrentHashMap<Class<? extends IRecorder>, List<Field>> logFieldCache = new ConcurrentHashMap<>();
+	private static Map<Class<? extends IRecorder>, List<Field>> logFieldCache = new ConcurrentHashMap<>();
 	private static Map<SQLType, Set<SQLType>> CHANGE_ALLOW_MAP = new HashMap<>();
 
 	private RecorderUtil() {

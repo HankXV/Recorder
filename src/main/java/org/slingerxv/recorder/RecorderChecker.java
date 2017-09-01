@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RecorderChecker {
 	private final static Logger log = LoggerFactory.getLogger(RecorderChecker.class);
-	private HashMap<String, Class<? extends IRecorder>> tables = new HashMap<>();
+	private Map<String, Class<? extends IRecorder>> tables = new HashMap<>();
 
 	public void clearTables() {
 		tables.clear();

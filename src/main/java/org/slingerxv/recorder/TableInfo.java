@@ -17,24 +17,26 @@ package org.slingerxv.recorder;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class TableInfo {
-	private HashMap<String, ColumnInfo> columnInfos = new HashMap<>();
-	private HashSet<String> primaryKeys = new HashSet<>();
+	private Map<String, ColumnInfo> columnInfos = new HashMap<>();
+	private Set<String> primaryKeys = new HashSet<>();
 
-	public HashMap<String, ColumnInfo> getColumnInfos() {
+	public Map<String, ColumnInfo> getColumnInfos() {
 		return columnInfos;
 	}
 
-	public void setColumnInfos(HashMap<String, ColumnInfo> columnInfos) {
+	public void setColumnInfos(Map<String, ColumnInfo> columnInfos) {
 		this.columnInfos = columnInfos;
 	}
 
-	public HashSet<String> getPrimaryKeys() {
+	public Set<String> getPrimaryKeys() {
 		return primaryKeys;
 	}
 
-	public void setPrimaryKeys(HashSet<String> primaryKeys) {
+	public void setPrimaryKeys(Set<String> primaryKeys) {
 		this.primaryKeys = primaryKeys;
 	}
 
